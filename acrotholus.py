@@ -9,7 +9,7 @@
 import argparse, os, yaml, pathlib
 from typing import Text
 from colorama import Fore, Back, Style
-from helpers import text, ips
+from helpers import text, ips, domains, hashes
 
 def readAPIKeys():
     """
@@ -48,6 +48,11 @@ if __name__ == '__main__':
             ips.checkThreatCrowd(eachFileInList)
     if args.domainsfile:
         text.printGreen("Domain list selected.")
+        for eachFileInList in args.domainsfile:
+            domains.checkThreatCrowd(eachFileInList)
     if args.hashesfile:
         text.printGreen("Hash list selected.")
+        for eachFileInList in args.hashesfile:
+            hashes.checkThreatCrowd(eachFileInList)
+
 

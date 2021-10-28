@@ -1,6 +1,6 @@
 """
-    ips.py
-    Purpose: Handle a txt document of IP addresses and look up against various API endpoints.
+    domains.py
+    Purpose: Handle a txt document of domains and look up against various API endpoints.
     Author: Jackson Nestler
     Source: https://github.com/jdoescyber/acrotholus
 """
@@ -9,10 +9,10 @@ import requests, time, json
 from helpers import text
 from random import randrange
 
-def checkThreatCrowd(ipFileLocation):
-    
+def checkThreatCrowd(domainFileLocation):
+
     """
-    Checks each IP in a given file against the ThreatCrowd API. Does *not* require an API key.
+    Checks each domain in a given file against the ThreatCrowd API. Does *not* require an API key.
 
     Returns:
         Nothing, just prints to terminal.
@@ -20,19 +20,18 @@ def checkThreatCrowd(ipFileLocation):
     """
 
     try:
-        with open(ipFileLocation, "r") as file:
+        with open(domainFileLocation, "r") as file:
             for line in file:
             
                 # This is the API endpoint for IP lookups.
-                result =  requests.get("https://www.threatcrowd.org/searchApi/v2/ip/report/", params = {"ip": line})
-
+                result =  requests.get("https://www.threatcrowd.org/searchApi/v2/domain/report/", params = {"domain": line})
                 jsonData = json.loads(result.text)
                 if jsonData['response_code'] == "1":
-                    text.printGreen("Found data for " + line + "...")
+                    text.printGreen("Found data for " + line)
                     print (jsonData)
                     # TODO: find some sample response and parse it out.
                 elif jsonData['response_code'] == "0":
-                    text.printRed("No results for IP: " + line)
+                    text.printRed("No results for domain: " + line)
                     #print ("**DEBUG**: " + result.text) # Uncomment line to show the JSON response.
                 
                 # ThreatCrowd requests a sleep of at least 10 seconds between requests, but allows bursting.
@@ -47,4 +46,4 @@ def checkThreatCrowd(ipFileLocation):
                 #print ("sleeping for " + str(courtesySleepDuration)) # if you'd like to see how long you're sleeping for, uncomment.
                 time.sleep(courtesySleepDuration)
     except Exception as e:
-        print(e)
+        print(e + "...the ThreatCrowd API may be down.")
