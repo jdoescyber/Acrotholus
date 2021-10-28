@@ -10,7 +10,7 @@ from helpers import text
 from random import randrange
 
 def checkThreatCrowd(ipFileLocation):
-    
+
     """
     Checks each IP in a given file against the ThreatCrowd API. Does *not* require an API key.
 
@@ -28,9 +28,27 @@ def checkThreatCrowd(ipFileLocation):
 
                 jsonData = json.loads(result.text)
                 if jsonData['response_code'] == "1":
-                    text.printGreen("Found data for " + line + "...")
-                    print (jsonData)
-                    # TODO: find some sample response and parse it out.
+                    text.printGreen("Found data for " + line)
+                
+                    # Looking at domains that pointed to this IP.
+                    for resolutions in jsonData['resolutions']: # for each result we get back...
+                        resolvedTime = resolutions['last_resolved'] # Grab the time it was resolved at.
+                        resolvedDomain = resolutions['domain'] # Grab the domain the IP resolved to.
+                        print("IP had domain " + str(resolvedDomain) + " on date " + resolvedTime)
+                    
+                    # Hashes known to communicate with this IP:
+                    for hash in jsonData['hashes']:
+                        print("The following hash was known to contact this IP: " + hash)
+
+                    # Any references:
+                    for reference in jsonData['references']:
+                        print("Reference: " + reference)
+                    
+                    # Community vote:
+                    communityScore = jsonData['votes']
+                    communityScore = str(communityScore)
+                    print("The vote for this IP is " + communityScore + ". This is a community score.")
+
                 elif jsonData['response_code'] == "0":
                     text.printRed("No results for IP: " + line)
                     #print ("**DEBUG**: " + result.text) # Uncomment line to show the JSON response.
