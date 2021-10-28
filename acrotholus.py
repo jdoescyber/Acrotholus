@@ -53,6 +53,7 @@ if __name__ == '__main__':
         text.printGreen("Domain list selected.")
         for eachFileInList in args.domainsfile:
             domains.checkThreatCrowd(eachFileInList)
+            domains.checkThreatMiner(eachFileInList)
     if args.hashesfile:
         text.printGreen("Hash list selected.")
         for eachFileInList in args.hashesfile:
