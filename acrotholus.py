@@ -35,9 +35,12 @@ if __name__ == '__main__':
     # Setup argparse
     scriptDescription = "Acrotholus aims to speed up OSINT and artifact vetting through API usage."
     parser = argparse.ArgumentParser(description=scriptDescription)
-    parser.add_argument("-ips","--ips-file", action="extend", nargs="+", dest="ipsfile", help="A file location with IP addresses.")
-    parser.add_argument("--hashes-file", action="extend", nargs="+", dest="hashesfile", help="A file location with hashes.")
-    parser.add_argument("--domains-file", action="extend", nargs="+", dest="domainsfile", help="A file location with domains.")
+    parser.add_argument("-ips","--ips-file", action="extend", 
+                        nargs="+", dest="ipsfile", help="A file location with IP addresses.")
+    parser.add_argument("--hashes-file", action="extend", 
+                        nargs="+", dest="hashesfile", help="A file location with hashes.")
+    parser.add_argument("--domains-file", action="extend", 
+                        nargs="+", dest="domainsfile", help="A file location with domains.")
     args = parser.parse_args()
 
     # API_KEYS_LIST = readAPIKeys() # Working with API-less options right now.
