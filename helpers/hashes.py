@@ -23,13 +23,32 @@ def checkThreatCrowd(hashesFileLocation):
         with open(hashesFileLocation, "r") as file:
             for line in file:
             
-                # This is the API endpoint for IP lookups.
+                # This is the API endpoint for hash lookups.
                 result =  requests.get("https://www.threatcrowd.org/searchApi/v2/file/report/", params = {"resource": line})
                 jsonData = json.loads(result.text)
                 if jsonData['response_code'] == "1":
                     text.printGreen("Found data for " + line)
-                    print (jsonData)
-                    # TODO: find some sample response and parse it out.
+                    
+                    # AV Results
+                    for avresult in jsonData['scans']:
+                        avresult = str(avresult)
+                        print ("AV flagged this hash as " + avresult)
+                    
+                    # IPs contacted
+                    for contactedIP in jsonData['ips']:
+                        contactedIP = str(contactedIP)
+                        print ("File is known to contact IP " + contactedIP)
+                    
+                    # Domains contacted
+                    for domainscontacted in jsonData['domains']:
+                        domainscontacted = str(domainscontacted)
+                        print ("File is known to contact domain " + domainscontacted)
+                    
+                    # References
+                    for reference in jsonData['references']:
+                        reference = str(reference)
+                        print("External reference: " + reference)
+
                 elif jsonData['response_code'] == "0":
                     text.printRed("No results for hash: " + line)
                     #print ("**DEBUG**: " + result.text) # Uncomment line to show the JSON response.
@@ -46,4 +65,4 @@ def checkThreatCrowd(hashesFileLocation):
                 #print ("sleeping for " + str(courtesySleepDuration)) # if you'd like to see how long you're sleeping for, uncomment.
                 time.sleep(courtesySleepDuration)
     except Exception as e:
-        print(e + "...the ThreatCrowd API may be down.")
+        print(e)
