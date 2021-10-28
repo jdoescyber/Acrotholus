@@ -66,3 +66,72 @@ def checkThreatCrowd(ipFileLocation):
                 time.sleep(courtesySleepDuration)
     except Exception as e:
         print(e)
+
+def checkThreatMiner(ipFileLocation):
+
+    """
+    Checks each domain in a given file against the ThreatCrowd API. Does *not* require an API key.
+
+    Returns:
+        Nothing, just prints to terminal.
+        In the future, may write to a CSV or text doc.
+    """
+
+    try:
+        
+        with open(ipFileLocation, 'r') as file:
+            for line in file:
+                url = "https://api.threatminer.org/v2/host.php"
+
+                # Start with passive DNS:
+                time.sleep(1)
+                params = {'q': line, 'rt': '2'}
+                result = requests.get(url, params)
+
+                if result.status_code == 200:
+                    jsonData = json.loads(result.text)
+                    if jsonData['status_code'] == "200":
+                        for result in jsonData['results']:
+                            knownDomain = result['domain']
+                            first_seen = result['first_seen']
+                            last_seen = result['last_seen']
+                            print("Domain had IP " + knownDomain + " first seen at " + first_seen + " and last seen at " + last_seen)
+
+                else:
+                    text.printRed("Received non-200 status code from ThreatMiner. API may be down or you may be rate limited.")
+            
+                time.sleep(1)
+                # Check out related samples
+                params = {'q': line, 'rt':'4'}
+                result = requests.get(url, params)
+
+                if result.status_code == 200:
+                    jsonData = json.loads(result.text)
+                    if jsonData['status_code'] == "200":
+                        for result in jsonData['results']:
+                            print("Associated hash: " + result)
+
+                else:
+                    text.printRed("Received non-200 status code from ThreatMiner. API may be down or you may be rate limited.")
+
+                time.sleep(1)    
+                # Check for APTNotes
+                params = {'q':line, 'rt':'6'}
+                result = requests.get(url, params)
+
+                if result.status_code == 200:
+                    jsonData = json.loads(result.text)
+                    if jsonData['status_code'] == "200":
+                        for result in jsonData['results']:
+                            text.printGreen("Found an APTNotes report.")
+                            reportName = str(result['filename'])
+                            reportDate = str(result['year'])
+                            reportURL = str(result['URL'])
+                            print("Name: " + reportName)
+                            print("From year " + reportDate)
+                            print("URL: " + reportURL)
+                            time.sleep(1)
+                else:
+                    text.printRed("Received non-200 status code from ThreatMiner. API may be down or you may be rate limited.")
+    except Exception as e:
+        print(e)

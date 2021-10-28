@@ -49,6 +49,7 @@ if __name__ == '__main__':
         text.printGreen("IP list selected.")
         for eachFileInList in args.ipsfile:
             ips.checkThreatCrowd(eachFileInList)
+            ips.checkThreatMiner(eachFileInList)
     if args.domainsfile:
         text.printGreen("Domain list selected.")
         for eachFileInList in args.domainsfile:
